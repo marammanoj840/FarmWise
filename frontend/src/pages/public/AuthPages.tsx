@@ -3,11 +3,26 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CheckCircle2, Info, KeyRound, MailCheck, UserPlus } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle2,
+  Info,
+  KeyRound,
+  Loader2,
+  MailCheck,
+  MapPin,
+  RefreshCw,
+  UserPlus,
+} from "lucide-react";
 import { authApi } from "@/api/services";
 import { getHomePathForRole, useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
 import { extractErrorMessage } from "@/utils/format";
+import {
+  detectCurrentLocation,
+  type GeolocationState,
+  type GeolocationStatus,
+} from "@/utils/geolocation";
 import { Badge, Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input, Select } from "@/components/ui/Field";
@@ -139,6 +154,7 @@ export function RegisterPage() {
     register,
     watch,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -148,6 +164,43 @@ export function RegisterPage() {
   const selectedRole = watch("role");
   const [verifyPreview, setVerifyPreview] = useState<string | null>(null);
   const [targetHome, setTargetHome] = useState<string>("/app/farmer");
+  const [geoState, setGeoState] = useState<GeolocationState>({ status: "idle" });
+
+  const handleDetectLocation = async () => {
+    try {
+      setGeoState({ status: "locating", message: "Requesting device location..." });
+      const detected = await detectCurrentLocation({
+        timeoutMs: 12000,
+        onStatusChange: (status, message) => {
+          setGeoState({ status, message });
+        },
+      });
+
+      const cityToFill = detected.city || detected.district || "";
+      if (cityToFill) {
+        setValue("city", cityToFill, { shouldValidate: true, shouldDirty: true });
+      }
+      if (detected.state) {
+        setValue("state", detected.state, { shouldValidate: true, shouldDirty: true });
+      }
+
+      const locationSummary = [detected.city, detected.state, detected.country]
+        .filter(Boolean)
+        .join(", ");
+
+      setGeoState({
+        status: "success",
+        message: locationSummary,
+        result: detected,
+      });
+      success("Location detected", `Auto-filled: ${locationSummary}`);
+    } catch (err: unknown) {
+      const customErr = err as { code?: GeolocationStatus; message?: string };
+      const status = customErr.code || "error";
+      const message = customErr.message || "Unable to detect location. Please enter manually.";
+      setGeoState({ status, message });
+    }
+  };
 
   const onSubmit = async (values: z.infer<typeof registerSchema>) => {
     try {
@@ -251,9 +304,109 @@ export function RegisterPage() {
             />
           )}
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Input label="City / Village" {...register("city")} />
-            <Input label="State" {...register("state")} />
+          <div className="space-y-3">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Input
+                label="City / Village"
+                placeholder="e.g., Guntur, Nashik, Karnal"
+                {...register("city")}
+              />
+              <Input
+                label="State"
+                placeholder="e.g., Andhra Pradesh, Maharashtra"
+                {...register("state")}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={handleDetectLocation}
+                  disabled={geoState.status === "locating" || geoState.status === "geocoding"}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#CDE0D5] bg-[#F2F7F4] px-3 py-1.5 text-xs font-semibold text-[#185339] transition-colors hover:bg-[#E3EEE7] focus:outline-none focus:ring-2 focus:ring-[#2A8C55] focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60 dark:border-[#224434] dark:bg-[#132B20] dark:text-[#52D888] dark:hover:bg-[#1B3A2C]"
+                  aria-label="Use my current location to auto-fill city and state"
+                >
+                  {geoState.status === "locating" || geoState.status === "geocoding" ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin text-[#2A8C55] dark:text-[#52D888]" />
+                  ) : (
+                    <MapPin className="h-3.5 w-3.5 text-[#2A8C55] dark:text-[#52D888]" />
+                  )}
+                  <span>
+                    {geoState.status === "locating" || geoState.status === "geocoding"
+                      ? "Detecting location..."
+                      : "📍 Use My Current Location"}
+                  </span>
+                </button>
+
+                {(geoState.status === "timeout" ||
+                  geoState.status === "error" ||
+                  geoState.status === "position_unavailable") && (
+                  <button
+                    type="button"
+                    onClick={handleDetectLocation}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-[#2A8C55] hover:underline dark:text-[#52D888]"
+                  >
+                    <RefreshCw className="h-3 w-3" />
+                    <span>Retry Location</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Success Notification Banner */}
+              {geoState.status === "success" && (
+                <div
+                  role="status"
+                  aria-live="polite"
+                  className="flex items-start gap-2 rounded-lg border border-emerald-200 bg-emerald-50/80 p-2.5 text-xs text-emerald-900 dark:border-emerald-900/60 dark:bg-emerald-950/30 dark:text-emerald-200"
+                >
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                  <div className="space-y-0.5">
+                    <p className="font-semibold">Location detected & auto-filled</p>
+                    <p className="text-emerald-800 dark:text-emerald-300">
+                      {geoState.message}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Permission Denied Notification Banner */}
+              {geoState.status === "permission_denied" && (
+                <div
+                  role="status"
+                  aria-live="polite"
+                  className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/80 p-2.5 text-xs text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200"
+                >
+                  <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                  <div className="space-y-0.5">
+                    <p className="font-semibold">Location access not granted</p>
+                    <p className="text-amber-800 dark:text-amber-300">
+                      {geoState.message}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Timeout, Position Unavailable or Error Notification Banner */}
+              {(geoState.status === "timeout" ||
+                geoState.status === "position_unavailable" ||
+                geoState.status === "error" ||
+                geoState.status === "unsupported") && (
+                <div
+                  role="alert"
+                  aria-live="polite"
+                  className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/80 p-2.5 text-xs text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200"
+                >
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                  <div className="space-y-0.5">
+                    <p className="font-semibold">Manual entry available</p>
+                    <p className="text-amber-800 dark:text-amber-300">
+                      {geoState.message}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           <Button type="submit" loading={isSubmitting} className="w-full" size="lg" icon={<UserPlus className="h-4 w-4" />}>

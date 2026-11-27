@@ -2,6 +2,17 @@
   publish = "dist"
   command = "npm run build"
 
+[build.environment]
+  # Production API Base URL configured with /api/v1 prefix to avoid 404
+  VITE_API_BASE_URL = "https://farmwise-backend.onrender.com/api/v1"
+
+# Netlify reverse proxy fallback for /api requests to production backend
+[[redirects]]
+  from = "/api/*"
+  to = "https://farmwise-backend.onrender.com/api/:splat"
+  status = 200
+  force = false
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

@@ -1,7 +1,31 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import type { AuthResponse } from "@/types/api";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api/v1";
+/**
+ * Normalizes any configured API base URL so that it always targets the correct `/api/v1` prefix.
+ * Handles:
+ * - Empty / undefined -> "/api/v1"
+ * - Relative "/api/v1" or "/api/v1/" -> "/api/v1"
+ * - Full domain "https://farmwise-backend.onrender.com" -> "https://farmwise-backend.onrender.com/api/v1"
+ * - Full domain with /api "https://farmwise-backend.onrender.com/api" -> "https://farmwise-backend.onrender.com/api/v1"
+ * - Full domain with /api/v1 "https://farmwise-backend.onrender.com/api/v1" -> "https://farmwise-backend.onrender.com/api/v1"
+ */
+export function resolveApiBaseUrl(rawEnv?: string): string {
+  const envUrl = (rawEnv !== undefined ? rawEnv : (import.meta.env.VITE_API_BASE_URL ?? "")).trim();
+  if (!envUrl) {
+    return "/api/v1";
+  }
+  const cleanUrl = envUrl.replace(/\/+$/, "");
+  if (!cleanUrl.endsWith("/api/v1")) {
+    if (cleanUrl.endsWith("/api")) {
+      return `${cleanUrl}/v1`;
+    }
+    return `${cleanUrl}/api/v1`;
+  }
+  return cleanUrl;
+}
+
+export const API_BASE_URL = resolveApiBaseUrl();
 
 const ACCESS_KEY = "fw_access_token";
 const REFRESH_KEY = "fw_refresh_token";
