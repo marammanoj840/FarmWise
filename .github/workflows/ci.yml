@@ -1,0 +1,83 @@
+name: FarmWise CI
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  security-and-hygiene:
+    name: Secret & Hygiene Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Verify No Secrets or Active .env Committed
+        run: |
+          echo "Checking for committed sensitive .env files..."
+          FOUND_ENV=$(find . -maxdepth 3 -name ".env" -o -name ".env.local" -o -name ".env.prod" | grep -v "\.example" || true)
+          if [ -n "$FOUND_ENV" ]; then
+            echo "ERROR: Unsafe environment file found in repo: $FOUND_ENV"
+            exit 1
+          fi
+          echo "Clean: No uncommitted/private environment secrets tracked."
+
+  frontend-checks:
+    name: Frontend Lint, Typecheck, Test & Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Run Vitest Unit Tests
+        run: npm test
+
+      - name: Production Vite Build
+        run: npm run build
+        env:
+          VITE_API_BASE_URL: /api/v1
+
+  backend-checks:
+    name: Backend Compile, Verify & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend-spring
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build and Test with Maven
+        run: mvn -B clean verify

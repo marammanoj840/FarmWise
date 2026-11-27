@@ -1,0 +1,62 @@
+name: Production Deployment Preparation & Docker Validation
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_env:
+        description: 'Target Deployment Environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      confirm_deployment:
+        description: 'Type "DEPLOY" to confirm you have reviewed credentials and have approval'
+        required: true
+        default: 'DRY_RUN'
+
+concurrency:
+  group: deploy-${{ github.event.inputs.target_env }}
+  cancel-in-progress: false
+
+jobs:
+  validate-and-package:
+    name: Validate Containers & Prepare Image Artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Verify Explicit User Confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirm_deployment }}" != "DEPLOY" ]; then
+            echo "Dry run mode active. Confirmation token '${{ github.event.inputs.confirm_deployment }}' is not 'DEPLOY'."
+            echo "Build validation will proceed without publishing or deploying."
+          else
+            echo "Production deployment confirmed for environment: ${{ github.event.inputs.target_env }}"
+          fi
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Frontend Container
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: false
+          tags: farmwise-frontend:${{ github.sha }}
+
+      - name: Build Backend Spring Boot Container
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend-spring
+          file: ./backend-spring/Dockerfile
+          push: false
+          tags: farmwise-backend:${{ github.sha }}
+
+      - name: Completion Summary
+        run: |
+          echo "Docker image verification completed successfully for SHA: ${{ github.sha }}"
+          echo "Ready for target host deployment via Cloud Run, Render, Railway, AWS ECS, or Docker Compose."

@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --fw-bg: #f7f5ee;
+    --fw-surface: #ffffff;
+    --fw-surface-muted: #eef3ee;
+    --fw-border: #dce5dc;
+    --fw-text: #11211b;
+    --fw-text-muted: #4b6358;
+    --fw-primary: #10402e;
+    --fw-primary-hover: #17573f;
+    --fw-leaf: #2a8c55;
+    --fw-harvest: #c88a24;
+  }
+
+  .dark {
+    --fw-bg: #081410;
+    --fw-surface: #0f211a;
+    --fw-surface-muted: #152b22;
+    --fw-border: #203d31;
+    --fw-text: #eef4f0;
+    --fw-text-muted: #9eb7ab;
+    --fw-primary: #3fb973;
+    --fw-primary-hover: #56cf88;
+    --fw-leaf: #4fd085;
+    --fw-harvest: #eab049;
+  }
+
+  html {
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    background-color: var(--fw-bg);
+    color: var(--fw-text);
+    scroll-behavior: smooth;
+  }
+
+  h1, h2, .font-display {
+    font-family: "Fraunces", "Plus Jakarta Sans", Georgia, serif;
+  }
+
+  h3, h4, .font-heading {
+    font-family: "Plus Jakarta Sans", "Inter", sans-serif;
+  }
+}
+
+.fw-card {
+  background-color: var(--fw-surface);
+  border: 1px solid var(--fw-border);
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px -4px rgba(16, 64, 46, 0.06);
+}
+
+.dark .fw-card {
+  box-shadow: 0 8px 28px -6px rgba(0, 0, 0, 0.35);
+}
+
+.fw-hero-mesh {
+  background-image:
+    radial-gradient(at 15% 20%, rgba(42, 140, 85, 0.14) 0px, transparent 55%),
+    radial-gradient(at 85% 15%, rgba(200, 138, 36, 0.12) 0px, transparent 50%),
+    radial-gradient(at 50% 90%, rgba(16, 64, 46, 0.08) 0px, transparent 55%);
+}
+
+.dark .fw-hero-mesh {
+  background-image:
+    radial-gradient(at 15% 20%, rgba(63, 185, 115, 0.16) 0px, transparent 55%),
+    radial-gradient(at 85% 15%, rgba(234, 176, 73, 0.1) 0px, transparent 50%),
+    radial-gradient(at 50% 90%, rgba(15, 33, 26, 0.9) 0px, transparent 55%);
+}

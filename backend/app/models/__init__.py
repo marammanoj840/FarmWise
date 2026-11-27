@@ -1,0 +1,75 @@
+"""Central ORM model exports for Alembic metadata discovery."""
+
+from app.models.auth import (
+    CustomerProfile,
+    FarmerProfile,
+    Permission,
+    RefreshToken,
+    Role,
+    RolePermission,
+    User,
+)
+from app.models.farm import (
+    Crop,
+    CropCycle,
+    CultivationActivity,
+    Farm,
+    FarmLocation,
+    SoilRecord,
+)
+from app.models.marketplace import (
+    Address,
+    CartItem,
+    FarmerFulfillmentGroup,
+    Order,
+    OrderItem,
+    Payment,
+    Product,
+    ProductCategory,
+    ProductImage,
+    Review,
+    ShoppingCart,
+    WishlistItem,
+)
+from app.models.ml import CropRecommendation, MLModelVersion
+from app.models.operations import Equipment, Expense, InventoryItem, Resource, Revenue
+from app.models.platform import AuditLog, ContactInquiry, Notification, SystemSetting
+
+__all__ = [
+    "Address",
+    "AuditLog",
+    "CartItem",
+    "ContactInquiry",
+    "Crop",
+    "CropCycle",
+    "CropRecommendation",
+    "CultivationActivity",
+    "CustomerProfile",
+    "Equipment",
+    "Expense",
+    "Farm",
+    "FarmLocation",
+    "FarmerFulfillmentGroup",
+    "FarmerProfile",
+    "InventoryItem",
+    "MLModelVersion",
+    "Notification",
+    "Order",
+    "OrderItem",
+    "Payment",
+    "Permission",
+    "Product",
+    "ProductCategory",
+    "ProductImage",
+    "RefreshToken",
+    "Resource",
+    "Revenue",
+    "Review",
+    "Role",
+    "RolePermission",
+    "ShoppingCart",
+    "SoilRecord",
+    "SystemSetting",
+    "User",
+    "WishlistItem",
+]

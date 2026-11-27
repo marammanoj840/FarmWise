@@ -1,0 +1,50 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local embedded PostgreSQL runtime data
+backend/.pgdata/
+.pgdata/
+
+# Node
+node_modules/
+dist/
+build/
+
+# ML artifacts and datasets
+*.joblib
+*.pkl
+*.h5
+*.onnx
+ml/datasets/*
+!ml/datasets/.gitkeep
+ml/evaluation/*.png
+ml/evaluation/*.json
+
+# Testing artifacts
+frontend/test-results/
+frontend/playwright-report/
+.playwright-mcp/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
