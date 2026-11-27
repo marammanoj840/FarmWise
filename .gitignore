@@ -1,26 +1,61 @@
-# Environment and secrets
+# Environment and secrets (Never commit live credentials)
 .env
 .env.*
+.env.local
+.env.production
+.env.staging
 !.env.example
+!.env*.example
+!*.env.example
 
-# Python
-__pycache__/
-*.py[cod]
+# Credentials, Keys and Certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.jks
+
+# Dependencies and Virtual Environments
+node_modules/
+frontend/node_modules/
+backend/.venv/
 .venv/
 venv/
+ENV/
+env/
+
+# Build and Compilation Artifacts
+target/
+backend-spring/target/
+dist/
+build/
+*.tsbuildinfo
+frontend/tsconfig.tsbuildinfo
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
 .pytest_cache/
 .ruff_cache/
 .coverage
 htmlcov/
+coverage/
 
-# Local embedded PostgreSQL runtime data
+# Database data, dumps, and backups
 backend/.pgdata/
 .pgdata/
+*.dump
+*.sql.gz
+*.bak
+backups/
 
-# Node
-node_modules/
-dist/
-build/
+# User uploads and runtime storage
+uploads/
+user-uploads/
+storage/
 
 # ML artifacts and datasets
 *.joblib
@@ -37,14 +72,22 @@ frontend/test-results/
 frontend/playwright-report/
 .playwright-mcp/
 
-# IDE
+# IDE and Editor Files
 .vscode/
 .idea/
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.settings/
 
-# OS
+# Operating System Files
 .DS_Store
 Thumbs.db
+ehthumbs.db
+desktop.ini
 
-# Logs
+# Logs and runtime files
 *.log
 logs/
+.mvn/timing.properties
