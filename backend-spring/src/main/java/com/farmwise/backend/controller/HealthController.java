@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1")
 @Tag(name = "System Health", description = "Application and database health check endpoints")
 public class HealthController {
 
@@ -21,7 +20,7 @@ public class HealthController {
         this.healthService = healthService;
     }
 
-    @GetMapping("/health")
+    @GetMapping({"/api/v1/health", "/health", "/"})
     @Operation(summary = "Check API and PostgreSQL database connectivity")
     public ResponseEntity<HealthResponse> health() {
         HealthResponse response = healthService.checkHealth();

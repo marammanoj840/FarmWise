@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: farmwise-backend
+    runtime: docker
+    dockerfilePath: ./backend-spring/Dockerfile
+    dockerContext: ./backend-spring
+    plan: starter
+    region: oregon
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: PORT
+        value: 8080
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: SPRING_FLYWAY_URL
+        sync: false
+      - key: SPRING_FLYWAY_USER
+        sync: false
+      - key: SPRING_FLYWAY_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://farmwise-app.pages.dev,https://*.pages.dev,https://farmwise.ag

@@ -39,6 +39,14 @@ class HealthControllerTest {
                 .andExpect(jsonPath("$.service").value("farmwise-backend"))
                 .andExpect(jsonPath("$.databaseStatus").value("UP"))
                 .andExpect(jsonPath("$.activeProfiles[0]").value("test"));
+
+        mockMvc.perform(get("/health"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("UP"));
+
+        mockMvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("UP"));
     }
 
     @Test

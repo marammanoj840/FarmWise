@@ -91,3 +91,5 @@ desktop.ini
 *.log
 logs/
 .mvn/timing.properties
+.neon
+scratch/

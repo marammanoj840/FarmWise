@@ -43,7 +43,33 @@ This guide details recommended cloud hosting architectures, verified pricing, an
 
 ## 2. Step-by-Step Deployment Instructions (Render + Cloudflare Pages)
 
-### Phase 1: Database Provisioning (Render PostgreSQL)
+### Phase 1: Database Provisioning (Neon Serverless PostgreSQL or Render PostgreSQL)
+
+#### Option 1: Neon Serverless PostgreSQL (Recommended & Active)
+- **Organization ID**: `org-bold-flower-32954002`
+- **Project ID**: `wispy-frost-48049545` (`farmwise-db`)
+- **Branch**: `production`
+- **Region**: `aws-us-west-2` (Oregon)
+- **Database Engine**: PostgreSQL 18.7
+- **Database Name**: `neondb`
+- **User**: `neondb_owner`
+- **Schema & Migrations**: Fully migrated and verified with Flyway `V1`–`V8` (46 tables).
+
+In the Render Web Service Environment settings, specify:
+```env
+SPRING_PROFILES_ACTIVE=prod
+PORT=8080
+SPRING_DATASOURCE_URL=jdbc:postgresql://ep-sweet-field-arnf5y0e-pooler.c-4.us-west-2.aws.neon.tech:5432/neondb?sslmode=require
+SPRING_DATASOURCE_USERNAME=neondb_owner
+SPRING_DATASOURCE_PASSWORD=<secure-neon-password-from-console>
+SPRING_FLYWAY_URL=jdbc:postgresql://ep-sweet-field-arnf5y0e.c-4.us-west-2.aws.neon.tech:5432/neondb?sslmode=require
+SPRING_FLYWAY_USER=neondb_owner
+SPRING_FLYWAY_PASSWORD=<secure-neon-password-from-console>
+JWT_SECRET=<384-bit-or-longer-secure-random-jwt-secret>
+CORS_ORIGINS=https://farmwise.pages.dev,https://farmwise.ag
+```
+
+#### Option 2: Render Managed PostgreSQL (Alternative)
 1. Log into your Render dashboard at [dashboard.render.com](https://dashboard.render.com).
 2. Click **New +** → **PostgreSQL**.
 3. Configure the database:

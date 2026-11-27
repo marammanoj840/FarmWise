@@ -21,7 +21,7 @@ spring:
       max-request-size: ${MAX_REQUEST_SIZE:12MB}
 
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${PORT:${SERVER_PORT:8080}}
   shutdown: graceful
   forward-headers-strategy: framework
   error:
