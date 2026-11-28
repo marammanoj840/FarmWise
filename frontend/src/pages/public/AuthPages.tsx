@@ -335,7 +335,7 @@ export function RegisterPage() {
                   <span>
                     {geoState.status === "locating" || geoState.status === "geocoding"
                       ? "Detecting location..."
-                      : "📍 Use My Current Location"}
+                      : "Use My Current Location"}
                   </span>
                 </button>
 

@@ -37,7 +37,7 @@ export function PublicLayout() {
                 to={item.to}
                 end={item.to === "/"}
                 className={({ isActive }) =>
-                  `rounded-lg px-3 py-2 text-sm font-medium transition ${
+                  `whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium transition xl:px-3 ${
                     isActive
                       ? "bg-[#10402E]/10 text-[#10402E] dark:bg-[#3FB973]/15 dark:text-[#56CF88]"
                       : "text-[#4B6358] hover:text-[#11211B] dark:text-[#9EB7AB] dark:hover:text-white"
@@ -49,7 +49,7 @@ export function PublicLayout() {
             ))}
           </nav>
 
-          <div className="hidden items-center gap-2.5 lg:flex">
+          <div className="hidden shrink-0 items-center gap-2 lg:flex xl:gap-2.5">
             <select
               aria-label="Select language"
               value={locale}
