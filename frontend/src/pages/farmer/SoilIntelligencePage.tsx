@@ -9,7 +9,7 @@ import { Badge, Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input, Select, Textarea } from "@/components/ui/Field";
 import { Modal } from "@/components/ui/Modal";
-import { Breadcrumbs } from "@/components/ui/Feedback";
+import { Breadcrumbs, EmptyState } from "@/components/ui/Feedback";
 
 export function SoilIntelligencePage() {
   const queryClient = useQueryClient();
@@ -147,36 +147,49 @@ export function SoilIntelligencePage() {
       </div>
 
       {tab === "soil" && (
-        <div className="grid gap-4 md:grid-cols-2">
-          {(soilRecords?.items || []).map((r) => (
-            <Card key={r.id} className="space-y-3">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h2 className="font-bold">{r.farmName}</h2>
-                  <p className="text-xs text-[#4B6358] dark:text-[#9EB7AB]">
-                    {r.soilType} • Tested {formatDate(r.testDate)} {r.labName ? `• ${r.labName}` : ""}
-                  </p>
+        !soilRecords || soilRecords.items.length === 0 ? (
+          <EmptyState
+            icon={<FlaskConical className="h-6 w-6" />}
+            title="No soil test records yet"
+            description="Record your laboratory soil test results to track NPK nutrients, soil pH, organic carbon, and receive tailored crop suitability guidance."
+            action={
+              <Button size="sm" onClick={() => setSoilModal(true)} icon={<Plus className="h-4 w-4" />}>
+                Add First Soil Record
+              </Button>
+            }
+          />
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2">
+            {(soilRecords?.items || []).map((r) => (
+              <Card key={r.id} className="space-y-3">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h2 className="font-bold">{r.farmName}</h2>
+                    <p className="text-xs text-[#4B6358] dark:text-[#9EB7AB]">
+                      {r.soilType} • Tested {formatDate(r.testDate)} {r.labName ? `• ${r.labName}` : ""}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Badge tone="green">pH {r.ph}</Badge>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => deleteSoil.mutate(r.id)}
+                      icon={<Trash2 className="h-3.5 w-3.5 text-red-600" />}
+                    />
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <Badge tone="green">pH {r.ph}</Badge>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => deleteSoil.mutate(r.id)}
-                    icon={<Trash2 className="h-3.5 w-3.5 text-red-600" />}
-                  />
+                <div className="grid grid-cols-4 gap-2 rounded-xl bg-[#EEF3EE] p-3 text-center text-xs dark:bg-[#152B22]">
+                  <div><p className="text-[#4B6358]">N</p><p className="font-bold">{r.nitrogen ?? "—"}</p></div>
+                  <div><p className="text-[#4B6358]">P</p><p className="font-bold">{r.phosphorus ?? "—"}</p></div>
+                  <div><p className="text-[#4B6358]">K</p><p className="font-bold">{r.potassium ?? "—"}</p></div>
+                  <div><p className="text-[#4B6358]">Org C%</p><p className="font-bold">{r.organicCarbonPct ?? "—"}</p></div>
                 </div>
-              </div>
-              <div className="grid grid-cols-4 gap-2 rounded-xl bg-[#EEF3EE] p-3 text-center text-xs dark:bg-[#152B22]">
-                <div><p className="text-[#4B6358]">N</p><p className="font-bold">{r.nitrogen ?? "—"}</p></div>
-                <div><p className="text-[#4B6358]">P</p><p className="font-bold">{r.phosphorus ?? "—"}</p></div>
-                <div><p className="text-[#4B6358]">K</p><p className="font-bold">{r.potassium ?? "—"}</p></div>
-                <div><p className="text-[#4B6358]">Org C%</p><p className="font-bold">{r.organicCarbonPct ?? "—"}</p></div>
-              </div>
-              {r.observations && <p className="text-xs text-[#4B6358] dark:text-[#9EB7AB]">{r.observations}</p>}
-            </Card>
-          ))}
-        </div>
+                {r.observations && <p className="text-xs text-[#4B6358] dark:text-[#9EB7AB]">{r.observations}</p>}
+              </Card>
+            ))}
+          </div>
+        )
       )}
 
       {tab === "observations" && (
@@ -188,30 +201,43 @@ export function SoilIntelligencePage() {
               approved agricultural expert before applying chemical treatments.
             </span>
           </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            {(observations?.items || []).map((o) => (
-              <Card key={o.id} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-bold">{o.title}</h3>
-                  <div className="flex gap-1.5">
-                    <Badge tone={o.severity === "HIGH" ? "red" : "amber"}>{o.severity}</Badge>
-                    <Badge tone={o.expertVerified ? "green" : "slate"}>
-                      {o.expertVerified ? "Expert Verified" : "Unverified Log"}
-                    </Badge>
+          {!observations || observations.items.length === 0 ? (
+            <EmptyState
+              icon={<AlertTriangle className="h-6 w-6" />}
+              title="No field observations logged"
+              description="Track pest sightings, leaf symptoms, disease outbreaks, and field health observations across your farm plots."
+              action={
+                <Button size="sm" variant="outline" onClick={() => setObsModal(true)} icon={<Plus className="h-4 w-4" />}>
+                  Log First Observation
+                </Button>
+              }
+            />
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2">
+              {(observations?.items || []).map((o) => (
+                <Card key={o.id} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold">{o.title}</h3>
+                    <div className="flex gap-1.5">
+                      <Badge tone={o.severity === "HIGH" ? "red" : "amber"}>{o.severity}</Badge>
+                      <Badge tone={o.expertVerified ? "green" : "slate"}>
+                        {o.expertVerified ? "Expert Verified" : "Unverified Log"}
+                      </Badge>
+                    </div>
                   </div>
-                </div>
-                <p className="text-xs text-[#4B6358] dark:text-[#9EB7AB]">
-                  {o.observationType} • Observed {formatDate(o.observedAt)}
-                </p>
-                <p className="text-sm">{o.symptoms}</p>
-                {o.recommendedAction && (
                   <p className="text-xs text-[#4B6358] dark:text-[#9EB7AB]">
-                    <strong>Action Note:</strong> {o.recommendedAction}
+                    {o.observationType} • Observed {formatDate(o.observedAt)}
                   </p>
-                )}
-              </Card>
-            ))}
-          </div>
+                  <p className="text-sm">{o.symptoms}</p>
+                  {o.recommendedAction && (
+                    <p className="text-xs text-[#4B6358] dark:text-[#9EB7AB]">
+                      <strong>Action Note:</strong> {o.recommendedAction}
+                    </p>
+                  )}
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
