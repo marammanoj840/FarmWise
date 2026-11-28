@@ -120,7 +120,7 @@ CORS_ORIGINS=https://farmwise.pages.dev,https://farmwise.ag
    S3_PUBLIC_BASE_URL=https://media.farmwise.ag
    ```
 5. Click **Deploy Web Service**.
-6. Render will automatically run the multi-stage Docker build, execute Flyway migrations (`V1` through `V8`), and bind to the public URL `https://api.farmwise.ag` (or `https://farmwise-backend.onrender.com`).
+6. Render will automatically run the multi-stage Docker build, execute Flyway migrations (`V1` through `V8`), and bind to the public URL `https://api.farmwise.ag` (or `https://farmwise-backend-6do0.onrender.com`).
 7. Verify backend health by visiting:
    ```bash
    curl -i https://api.farmwise.ag/api/v1/health

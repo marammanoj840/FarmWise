@@ -20,7 +20,7 @@ public class HealthController {
         this.healthService = healthService;
     }
 
-    @GetMapping({"/api/v1/health", "/health", "/"})
+    @GetMapping({"/api/v1/health", "/api/v1/health/", "/health", "/health/", "/"})
     @Operation(summary = "Check API and PostgreSQL database connectivity")
     public ResponseEntity<HealthResponse> health() {
         HealthResponse response = healthService.checkHealth();

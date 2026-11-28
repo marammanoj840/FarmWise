@@ -27,7 +27,7 @@ Managing your DNS through Cloudflare provides edge DDoS mitigation, HTTP/3, Brot
 | :--- | :--- | :--- | :--- | :--- |
 | **CNAME** | `@` (apex) | `farmwise.pages.dev` (or Vercel CNAME `cname.vercel-dns.com`) | Proxied (Orange Cloud) | Auto |
 | **CNAME** | `www` | `farmwise.ag` (or `farmwise.pages.dev`) | Proxied (Orange Cloud) | Auto |
-| **CNAME** | `api` | `farmwise-backend.onrender.com` (or Railway/AWS domain) | Proxied (Orange Cloud) | Auto |
+| **CNAME** | `api` | `farmwise-backend-6do0.onrender.com` (or Railway/AWS domain) | Proxied (Orange Cloud) | Auto |
 | **CNAME** | `media` | Custom domain endpoint for Cloudflare R2 bucket | Proxied (Orange Cloud) | Auto |
 | **TXT** | `@` | SPF Record: `v=spf1 include:sendgrid.net ~all` | DNS Only | Auto |
 | **TXT** | `_dmarc` | DMARC Record: `v=DMARC1; p=quarantine; rua=mailto:dmarc@farmwise.ag` | DNS Only | Auto |
