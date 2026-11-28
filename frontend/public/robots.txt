@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /features
+Allow: /how-it-works
+Allow: /solutions
+Allow: /resources
+Allow: /marketplace
+Allow: /contact
+Allow: /faq
+Allow: /privacy
+Allow: /terms
+Allow: /login
+Allow: /register
+Disallow: /app/
+
+Sitemap: https://myfarmwise.netlify.app/sitemap.xml

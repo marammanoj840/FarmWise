@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { lazy, Suspense, type ReactNode } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider, getHomePathForRole, useAuth } from "@/context/AuthContext";
@@ -10,53 +10,53 @@ import { PublicLayout } from "@/layouts/PublicLayout";
 import { PortalLayout } from "@/layouts/PortalLayout";
 import type { UserRole } from "@/types/api";
 
-// Public & Auth Pages
+// Public & Auth Pages (Eager load critical landing, lazy load auth & subpages)
 import { HomePage } from "@/pages/public/HomePage";
-import { AboutPage } from "@/pages/public/AboutPage";
-import { FeaturesPage } from "@/pages/public/FeaturesPage";
-import { HowItWorksPage } from "@/pages/public/HowItWorksPage";
-import { SolutionsPage } from "@/pages/public/SolutionsPage";
-import { ResourcesPage } from "@/pages/public/ResourcesPage";
-import { ContactPage } from "@/pages/public/ContactPage";
-import { FaqPage } from "@/pages/public/FaqPage";
-import { PrivacyPage, TermsPage } from "@/pages/public/LegalPages";
-import {
-  ForgotPasswordPage,
-  LoginPage,
-  RegisterPage,
-  ResetPasswordPage,
-  VerifyEmailPage,
-} from "@/pages/public/AuthPages";
 
-// Farmer Portal
-import { FarmerDashboardPage } from "@/pages/farmer/FarmerDashboardPage";
-import { FarmsPage } from "@/pages/farmer/FarmsPage";
-import { FarmDetailPage } from "@/pages/farmer/FarmDetailPage";
-import { CropsPage } from "@/pages/farmer/CropsPage";
-import { CultivationPage } from "@/pages/farmer/CultivationPage";
-import { InventoryPage } from "@/pages/farmer/InventoryPage";
-import { FinancePage } from "@/pages/farmer/FinancePage";
-import { ReportsPage } from "@/pages/farmer/ReportsPage";
-import { WeatherPage } from "@/pages/farmer/WeatherPage";
-import { SoilIntelligencePage } from "@/pages/farmer/SoilIntelligencePage";
-import { AssistantPage } from "@/pages/farmer/AssistantPage";
-import { ProducePage } from "@/pages/farmer/ProducePage";
+const AboutPage = lazy(() => import("@/pages/public/AboutPage").then((m) => ({ default: m.AboutPage })));
+const FeaturesPage = lazy(() => import("@/pages/public/FeaturesPage").then((m) => ({ default: m.FeaturesPage })));
+const HowItWorksPage = lazy(() => import("@/pages/public/HowItWorksPage").then((m) => ({ default: m.HowItWorksPage })));
+const SolutionsPage = lazy(() => import("@/pages/public/SolutionsPage").then((m) => ({ default: m.SolutionsPage })));
+const ResourcesPage = lazy(() => import("@/pages/public/ResourcesPage").then((m) => ({ default: m.ResourcesPage })));
+const ContactPage = lazy(() => import("@/pages/public/ContactPage").then((m) => ({ default: m.ContactPage })));
+const FaqPage = lazy(() => import("@/pages/public/FaqPage").then((m) => ({ default: m.FaqPage })));
+const PrivacyPage = lazy(() => import("@/pages/public/LegalPages").then((m) => ({ default: m.PrivacyPage })));
+const TermsPage = lazy(() => import("@/pages/public/LegalPages").then((m) => ({ default: m.TermsPage })));
+const LoginPage = lazy(() => import("@/pages/public/AuthPages").then((m) => ({ default: m.LoginPage })));
+const RegisterPage = lazy(() => import("@/pages/public/AuthPages").then((m) => ({ default: m.RegisterPage })));
+const ForgotPasswordPage = lazy(() => import("@/pages/public/AuthPages").then((m) => ({ default: m.ForgotPasswordPage })));
+const ResetPasswordPage = lazy(() => import("@/pages/public/AuthPages").then((m) => ({ default: m.ResetPasswordPage })));
+const VerifyEmailPage = lazy(() => import("@/pages/public/AuthPages").then((m) => ({ default: m.VerifyEmailPage })));
+
+// Farmer Portal (Lazy-loaded per module)
+const FarmerDashboardPage = lazy(() => import("@/pages/farmer/FarmerDashboardPage").then((m) => ({ default: m.FarmerDashboardPage })));
+const FarmsPage = lazy(() => import("@/pages/farmer/FarmsPage").then((m) => ({ default: m.FarmsPage })));
+const FarmDetailPage = lazy(() => import("@/pages/farmer/FarmDetailPage").then((m) => ({ default: m.FarmDetailPage })));
+const CropsPage = lazy(() => import("@/pages/farmer/CropsPage").then((m) => ({ default: m.CropsPage })));
+const CultivationPage = lazy(() => import("@/pages/farmer/CultivationPage").then((m) => ({ default: m.CultivationPage })));
+const InventoryPage = lazy(() => import("@/pages/farmer/InventoryPage").then((m) => ({ default: m.InventoryPage })));
+const FinancePage = lazy(() => import("@/pages/farmer/FinancePage").then((m) => ({ default: m.FinancePage })));
+const ReportsPage = lazy(() => import("@/pages/farmer/ReportsPage").then((m) => ({ default: m.ReportsPage })));
+const WeatherPage = lazy(() => import("@/pages/farmer/WeatherPage").then((m) => ({ default: m.WeatherPage })));
+const SoilIntelligencePage = lazy(() => import("@/pages/farmer/SoilIntelligencePage").then((m) => ({ default: m.SoilIntelligencePage })));
+const AssistantPage = lazy(() => import("@/pages/farmer/AssistantPage").then((m) => ({ default: m.AssistantPage })));
+const ProducePage = lazy(() => import("@/pages/farmer/ProducePage").then((m) => ({ default: m.ProducePage })));
 
 // Shared & Role Portals
-import { MarketPricesPage } from "@/pages/shared/MarketPricesPage";
-import { MarketplacePage } from "@/pages/shared/MarketplacePage";
-import { ExpertsDirectoryPage } from "@/pages/shared/ExpertsDirectoryPage";
-import { NotificationsPage } from "@/pages/shared/NotificationsPage";
-import { ProfileSettingsPage } from "@/pages/shared/ProfileSettingsPage";
-import { ExpertPortalPage } from "@/pages/roles/ExpertPortalPage";
-import { SupplierPortalPage } from "@/pages/roles/SupplierPortalPage";
-import { BuyerPortalPage } from "@/pages/roles/BuyerPortalPage";
+const MarketPricesPage = lazy(() => import("@/pages/shared/MarketPricesPage").then((m) => ({ default: m.MarketPricesPage })));
+const MarketplacePage = lazy(() => import("@/pages/shared/MarketplacePage").then((m) => ({ default: m.MarketplacePage })));
+const ExpertsDirectoryPage = lazy(() => import("@/pages/shared/ExpertsDirectoryPage").then((m) => ({ default: m.ExpertsDirectoryPage })));
+const NotificationsPage = lazy(() => import("@/pages/shared/NotificationsPage").then((m) => ({ default: m.NotificationsPage })));
+const ProfileSettingsPage = lazy(() => import("@/pages/shared/ProfileSettingsPage").then((m) => ({ default: m.ProfileSettingsPage })));
+const ExpertPortalPage = lazy(() => import("@/pages/roles/ExpertPortalPage").then((m) => ({ default: m.ExpertPortalPage })));
+const SupplierPortalPage = lazy(() => import("@/pages/roles/SupplierPortalPage").then((m) => ({ default: m.SupplierPortalPage })));
+const BuyerPortalPage = lazy(() => import("@/pages/roles/BuyerPortalPage").then((m) => ({ default: m.BuyerPortalPage })));
 
 // Admin Portal
-import { AdminDashboardPage } from "@/pages/admin/AdminDashboardPage";
-import { AdminUsersPage } from "@/pages/admin/AdminUsersPage";
-import { AdminModerationPage } from "@/pages/admin/AdminModerationPage";
-import { AdminAuditHealthPage } from "@/pages/admin/AdminAuditHealthPage";
+const AdminDashboardPage = lazy(() => import("@/pages/admin/AdminDashboardPage").then((m) => ({ default: m.AdminDashboardPage })));
+const AdminUsersPage = lazy(() => import("@/pages/admin/AdminUsersPage").then((m) => ({ default: m.AdminUsersPage })));
+const AdminModerationPage = lazy(() => import("@/pages/admin/AdminModerationPage").then((m) => ({ default: m.AdminModerationPage })));
+const AdminAuditHealthPage = lazy(() => import("@/pages/admin/AdminAuditHealthPage").then((m) => ({ default: m.AdminAuditHealthPage })));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -298,7 +298,9 @@ export default function App() {
             <ToastProvider>
               <AuthProvider>
                 <BrowserRouter>
-                  <AppRoutes />
+                  <Suspense fallback={<LoadingScreen />}>
+                    <AppRoutes />
+                  </Suspense>
                 </BrowserRouter>
               </AuthProvider>
             </ToastProvider>
