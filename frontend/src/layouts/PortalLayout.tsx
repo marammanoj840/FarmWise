@@ -165,7 +165,7 @@ export function PortalLayout() {
               type="button"
               onClick={() => setSidebarOpen(true)}
               aria-label="Open navigation menu"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#DCE5DC] bg-white dark:border-[#244337] dark:bg-[#0F211A] lg:hidden"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[#DCE5DC] bg-white dark:border-[#244337] dark:bg-[#0F211A] lg:hidden"
             >
               <Menu className="h-5 w-5" />
             </button>
